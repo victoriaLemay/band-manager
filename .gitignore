@@ -1,0 +1,8 @@
+*.iml
+.idea/
+logs
+*.log
+coverage
+build/Release
+node_modules
+.env
