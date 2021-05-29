@@ -6,3 +6,5 @@ coverage
 build/Release
 node_modules
 .env
+docker-compose.yml
+config.js
