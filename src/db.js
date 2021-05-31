@@ -11,8 +11,8 @@ function getDb() {
     throw new Error('The database has not been initialized.');
 }
 
-function initDb(dbHost, dbUser, dbPassword, db) {
-    const sequelize = new Sequelize(db, dbUser, dbPassword, {
+function initDb(dbHost, dbUser, dbPassword, dbName) {
+    const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
         host: dbHost,
         dialect: 'mariadb'
     });
@@ -22,7 +22,7 @@ function initDb(dbHost, dbUser, dbPassword, db) {
             console.log('Connected to database');
 
             const umzug = new Umzug({
-                migrations: { glob: 'src/migrations/*.js' },
+                migrations: { glob: 'src/database/migrations/*.js' },
                 context: sequelize.getQueryInterface(),
                 storage: new SequelizeStorage({ sequelize }),
                 logger: console,

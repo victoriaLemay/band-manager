@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize');
+const artistSeeds = require('../seeders/artists');
 
 async function up({ context: queryInterface }) {
     await queryInterface.createTable('artists', {
@@ -12,16 +13,18 @@ async function up({ context: queryInterface }) {
             type: DataTypes.STRING(256),
             allowNull: false
         },
-        createdAt: {
+        created_at: {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3)')
         },
-        updatedAt: {
+        updated_at: {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)')
         }
+    }).then(() => {
+        queryInterface.bulkInsert('artists', artistSeeds);
     });
 }
 
