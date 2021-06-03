@@ -1,25 +1,24 @@
 const { Sequelize } = require('sequelize');
 const { Umzug, SequelizeStorage } = require('umzug');
 
-let _db;
-
 function getDb() {
-    if (_db) {
-        return _db;
+    if (this.db) {
+        return this.db;
     }
-
     throw new Error('The database has not been initialized.');
 }
 
-function initDb(dbHost, dbUser, dbPassword, dbName) {
+async function initDb(dbHost, dbUser, dbPassword, dbName) {
     const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
         host: dbHost,
         dialect: 'mariadb'
     });
 
-    sequelize.authenticate()
+    await sequelize.authenticate()
         .then((connectionStatus) => {
             console.log('Connected to database');
+
+            this.db = sequelize;
 
             const umzug = new Umzug({
                 migrations: { glob: 'src/database/migrations/*.js' },
@@ -35,10 +34,6 @@ function initDb(dbHost, dbUser, dbPassword, dbName) {
         .catch (err => {
             console.log('Failed to connect: ' + err);
         });
-
-    _db = sequelize;
-
-    return _db;
 }
 
 module.exports = {
