@@ -1,7 +1,7 @@
 {
-  "name": "femme-rock-band-manager",
+  "name": "band-manager",
   "version": "1.0.0",
-  "description": "A wrapper for storing and querying FemmeRock band data in a MySQL database",
+  "description": "A wrapper for storing and querying band data in a MySQL database (built for FemmeRock)",
   "main": "src/index.js",
   "scripts": {
     "start": "node index",
