@@ -7,14 +7,14 @@ const { getDb } = require('../src/db');
 let repositories;
 let sequelize;
 
-describe('Artist Method Tests', function() {
+describe('Artist Tests', function() {
     before(() => {
         sequelize = getDb();
         repositories = require('../src/repositories/repositories');
     });
 
     after(function() {
-        console.log('nothing to do here');
+        console.log('Artist Tests Complete');
     });
 
     describe('Artist Repo Tests', function() {
@@ -44,7 +44,6 @@ describe('Artist Method Tests', function() {
             const columns = ['name'];
 
             const { count, rows } = await repositories.artistRepo.getArtists(50, 0, '', columns);
-            // const records = rows.map(result => result.getDataValue('name'));
             rows[0].getDataValue('name').should.be.a('string');
             try {
                 rows[0].getDataValue('id');
@@ -85,16 +84,18 @@ describe('Artist Method Tests', function() {
 
         it('createArtist() should create an artist when a valid name is provided', async function() {
             let artist, created;
-            [artist, created] = await repositories.artistRepo.createArtist('AFI');
-            artist.should.have.property('name').equal('AFI');
+            let name = 'AFI';
+            [artist, created] = await repositories.artistRepo.createArtist(name);
+            artist.should.have.property('name').equal(name);
             created.should.be.a('boolean');
             created.should.equal(true);
         });
 
         it('createArtist() should return an existing artist when a duplicate name is provided', async function() {
             let artist, created;
-            [artist, created] = await repositories.artistRepo.createArtist('AFI');
-            artist.should.have.property('name').equal('AFI');
+            let name = 'AFI';
+            [artist, created] = await repositories.artistRepo.createArtist(name);
+            artist.should.have.property('name').equal(name);
             created.should.be.a('boolean');
             created.should.equal(false);
         });
@@ -128,8 +129,6 @@ describe('Artist Method Tests', function() {
             const originalName = 'Another Test Artist';
             const updatedName = null;
             await sequelize.query(`INSERT INTO artists (name) VALUES ('${originalName}');`, { type: QueryTypes.INSERT });
-            const originalArtist = await sequelize.query(`SELECT id FROM artists WHERE name = '${originalName}' LIMIT 1;`,
-                { type: QueryTypes.SELECT });
 
             try {
                 await repositories.artistRepo.updateArtist(originalName, updatedName);
