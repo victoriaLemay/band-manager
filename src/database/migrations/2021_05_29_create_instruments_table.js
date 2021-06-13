@@ -11,7 +11,8 @@ async function up({ context: queryInterface }) {
         },
         name: {
             type: DataTypes.STRING(256),
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         created_at: {
             type: DataTypes.DATE,
