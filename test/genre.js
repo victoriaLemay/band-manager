@@ -10,7 +10,7 @@ let sequelize;
 describe('Genre Tests', function() {
     before(() => {
         sequelize = getDb();
-        repositories = require('../src/repositories/repositories');
+        repositories = require('../src/providers');
     });
 
     after(function() {
@@ -83,21 +83,19 @@ describe('Genre Tests', function() {
         });
 
         it('createGenre() should create a genre when a valid name is provided', async function() {
-            let genre, created;
             let name = 'Rockabilly';
-            [genre, created] = await repositories.genreRepo.createGenre(name);
+            const genre = await repositories.genreRepo.createGenre(name);
             genre.should.have.property('name').equal(name);
-            created.should.be.a('boolean');
-            created.should.equal(true);
         });
 
-        it('createGenre() should return an existing genre when a duplicate name is provided', async function() {
-            let genre, created;
+        it('createGenre() should fail when a duplicate name is provided', async function() {
             let name = 'Rockabilly';
-            [genre, created] = await repositories.genreRepo.createGenre(name);
-            genre.should.have.property('name').equal(name);
-            created.should.be.a('boolean');
-            created.should.equal(false);
+            try {
+                await repositories.genreRepo.createGenre(name);
+            } catch(err) {
+                err.should.be.an('error');
+                err.message.should.equal('Validation error');
+            }
         });
 
         it('createGenre() should throw an exception if no name is provided', async function() {
@@ -117,7 +115,7 @@ describe('Genre Tests', function() {
             const originalGenre = await sequelize.query(`SELECT id FROM genres WHERE name = '${originalName}' LIMIT 1;`,
                 { type: QueryTypes.SELECT });
 
-            await repositories.genreRepo.updateGenre(originalName, updatedName);
+            await repositories.genreRepo.updateGenre(originalGenre[0].id, { name : updatedName });
 
             const updatedGenre = await sequelize.query(`SELECT id FROM genres WHERE name = '${updatedName}' LIMIT 1;`,
                 { type: QueryTypes.SELECT });
@@ -129,9 +127,11 @@ describe('Genre Tests', function() {
             const originalName = 'Another Test Genre';
             const updatedName = null;
             await sequelize.query(`INSERT INTO genres (name) VALUES ('${originalName}');`, { type: QueryTypes.INSERT });
+            const originalGenre = await sequelize.query(`SELECT id FROM genres WHERE name = '${originalName}' LIMIT 1;`,
+                { type: QueryTypes.SELECT });
 
             try {
-                await repositories.genreRepo.updateGenre(originalName, updatedName);
+                await repositories.genreRepo.updateGenre(originalGenre[0].id, { name: updatedName });
             } catch (err) {
                 err.should.be.an('error');
                 err.message.should.equal('notNull Violation: Genre.name cannot be null');

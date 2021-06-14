@@ -1,16 +1,14 @@
-const { Op, TModelAttributes } = require('sequelize');
+const { TModelAttributes } = require('sequelize');
 
 module.exports = class InstrumentRepo {
 
     /**
      * InstrumentRepo constructor
      *
-     * @param sequelize
-     * @param InstrumentModel
+     * @param repository
      */
-    constructor(sequelize, InstrumentModel) {
-        this.sequelize = sequelize;
-        this.instrumentModel = InstrumentModel;
+    constructor(repository) {
+        this.repository = repository;
     }
 
     /**
@@ -21,27 +19,10 @@ module.exports = class InstrumentRepo {
      * @param search - default: none specified
      * @param columns - default: *
      *
-     * @returns {Promise<{rows: Artist[], count: number}>}
+     * @returns {Promise<{rows: Instrument[], count: number}>}
      */
-    async getInstruments(limit = 50, offset = 0, search = '', columns = ['*']) {
-        let options = {
-            limit: limit,
-            offset: offset
-        };
-
-        if (search) {
-            options.where = {
-                name: {
-                    [Op.like]: search
-                }
-            };
-        }
-
-        if (columns) {
-            options.attributes = columns
-        }
-
-        return await this.instrumentModel.findAndCountAll(options);
+    async getInstruments(limit = 50, offset = 0, search = '', columns = []) {
+        return await this.repository.getAll(limit, offset, search, columns);
     }
 
     /**
@@ -52,7 +33,7 @@ module.exports = class InstrumentRepo {
      * @returns {Promise<*>}
      */
     async getInstrumentById(id) {
-        return await this.instrumentModel.findByPk(id);
+        return await this.repository.getById(id);
     }
 
     /**
@@ -63,7 +44,7 @@ module.exports = class InstrumentRepo {
      * @returns {Promise<*>}
      */
     async getInstrumentByName(name) {
-        return await this.instrumentModel.findOne({ where : { name: name } });
+        return await this.repository.getByField('name', name);
     }
 
     /**
@@ -74,19 +55,19 @@ module.exports = class InstrumentRepo {
      * @returns {Promise<[Instrument<any, TModelAttributes>, boolean]>}
      */
     async createInstrument(name) {
-        return await this.instrumentModel.findOrCreate({ where: { name: name } });
+        return await this.repository.create({ name: name });
     }
 
     /**
      * Update an Instrument
      *
-     * @param oldName
-     * @param newName
+     * @param id
+     * @param attributes
      *
      * @returns {Promise<*>}
      */
-    async updateInstrument(oldName, newName) {
-        return await this.instrumentModel.update({ name: newName }, { where : { name: oldName }});
+    async updateInstrument(id, attributes) {
+        return await this.repository.update(id, attributes);
     }
 
     /**
@@ -97,6 +78,6 @@ module.exports = class InstrumentRepo {
      * @returns {Promise<*>}
      */
     async deleteInstrument(id) {
-        return await this.instrumentModel.destroy({ where: { id: id }});
+        return await this.repository.delete(id);
     }
 }

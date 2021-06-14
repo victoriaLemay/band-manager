@@ -1,16 +1,14 @@
-const { Op, TModelAttributes } = require('sequelize');
+const { TModelAttributes } = require('sequelize');
 
 module.exports = class ArtistRepo {
 
     /**
      * ArtistRepo constructor
      *
-     * @param sequelize
-     * @param ArtistModel
+     * @param repository
      */
-    constructor(sequelize, ArtistModel) {
-        this.sequelize = sequelize;
-        this.artistModel = ArtistModel;
+    constructor(repository) {
+        this.repository = repository;
     }
 
     /**
@@ -23,25 +21,8 @@ module.exports = class ArtistRepo {
      *
      * @returns {Promise<{rows: Artist[], count: number}>}
      */
-    async getArtists(limit = 50, offset = 0, search = '', columns = ['*']) {
-        let options = {
-            limit: limit,
-            offset: offset
-        };
-
-        if (search) {
-            options.where = {
-                name: {
-                    [Op.like]: search
-                }
-            };
-        }
-
-        if (columns) {
-            options.attributes = columns
-        }
-
-        return await this.artistModel.findAndCountAll(options);
+    async getArtists(limit = 50, offset = 0, search = '', columns = []) {
+        return await this.repository.getAll(limit, offset, search, columns);
     }
 
     /**
@@ -52,7 +33,7 @@ module.exports = class ArtistRepo {
      * @returns {Promise<*>}
      */
     async getArtistById(id) {
-        return await this.artistModel.findByPk(id);
+        return await this.repository.getById(id);
     }
 
     /**
@@ -63,7 +44,7 @@ module.exports = class ArtistRepo {
      * @returns {Promise<*>}
      */
     async getArtistByName(name) {
-        return await this.artistModel.findOne({ where : { name: name } });
+        return await this.repository.getByField('name', name);
     }
 
     /**
@@ -74,19 +55,19 @@ module.exports = class ArtistRepo {
      * @returns {Promise<[Artist<any, TModelAttributes>, boolean]>}
      */
     async createArtist(name) {
-        return await this.artistModel.findOrCreate({ where: { name: name } });
+        return await this.repository.create({ name: name });
     }
 
     /**
      * Update an Artist
      *
-     * @param oldName
-     * @param newName
+     * @param id
+     * @param attributes
      *
      * @returns {Promise<*>}
      */
-    async updateArtist(oldName, newName) {
-        return await this.artistModel.update({ name: newName }, { where : { name: oldName }});
+    async updateArtist(id, attributes) {
+        return await this.repository.update(id, attributes);
     }
 
     /**
@@ -97,7 +78,7 @@ module.exports = class ArtistRepo {
      * @returns {Promise<*>}
      */
     async deleteArtist(id) {
-        return await this.artistModel.destroy({ where: { id: id }});
+        return await this.repository.delete(id);
     }
 
 }

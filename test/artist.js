@@ -10,7 +10,7 @@ let sequelize;
 describe('Artist Tests', function() {
     before(() => {
         sequelize = getDb();
-        repositories = require('../src/repositories/repositories');
+        repositories = require('../src/providers');
     });
 
     after(function() {
@@ -83,21 +83,19 @@ describe('Artist Tests', function() {
         });
 
         it('createArtist() should create an artist when a valid name is provided', async function() {
-            let artist, created;
             let name = 'AFI';
-            [artist, created] = await repositories.artistRepo.createArtist(name);
+            const artist = await repositories.artistRepo.createArtist(name);
             artist.should.have.property('name').equal(name);
-            created.should.be.a('boolean');
-            created.should.equal(true);
         });
 
-        it('createArtist() should return an existing artist when a duplicate name is provided', async function() {
-            let artist, created;
+        it('createArtist() should fail when a duplicate name is provided', async function() {
             let name = 'AFI';
-            [artist, created] = await repositories.artistRepo.createArtist(name);
-            artist.should.have.property('name').equal(name);
-            created.should.be.a('boolean');
-            created.should.equal(false);
+            try {
+                await repositories.artistRepo.createArtist(name);
+            } catch (err) {
+                err.should.be.an('error');
+                err.message.should.equal('Validation error');
+            }
         });
 
         it('createArtist() should throw an exception if no name is provided', async function() {
@@ -117,7 +115,7 @@ describe('Artist Tests', function() {
             const originalArtist = await sequelize.query(`SELECT id FROM artists WHERE name = '${originalName}' LIMIT 1;`,
                 { type: QueryTypes.SELECT });
 
-            await repositories.artistRepo.updateArtist(originalName, updatedName);
+            await repositories.artistRepo.updateArtist(originalArtist[0].id, { name : updatedName });
 
             const updatedArtist = await sequelize.query(`SELECT id FROM artists WHERE name = '${updatedName}' LIMIT 1;`,
                 { type: QueryTypes.SELECT });
@@ -129,9 +127,11 @@ describe('Artist Tests', function() {
             const originalName = 'Another Test Artist';
             const updatedName = null;
             await sequelize.query(`INSERT INTO artists (name) VALUES ('${originalName}');`, { type: QueryTypes.INSERT });
+            const originalArtist = await sequelize.query(`SELECT id FROM artists WHERE name = '${originalName}' LIMIT 1;`,
+                { type: QueryTypes.SELECT });
 
             try {
-                await repositories.artistRepo.updateArtist(originalName, updatedName);
+                await repositories.artistRepo.updateArtist(originalArtist[0].id, { name: updatedName });
             } catch (err) {
                 err.should.be.an('error');
                 err.message.should.equal('notNull Violation: Artist.name cannot be null');

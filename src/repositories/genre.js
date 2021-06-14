@@ -1,16 +1,14 @@
-const { Op, TModelAttributes } = require('sequelize');
+const { TModelAttributes } = require('sequelize');
 
 module.exports = class GenreRepo {
 
     /**
      * GenreRepo constructor
      *
-     * @param sequelize
-     * @param GenreModel
+     * @param repository
      */
-    constructor(sequelize, GenreModel) {
-        this.sequelize = sequelize;
-        this.genreModel = GenreModel;
+    constructor(repository) {
+        this.repository = repository;
     }
 
     /**
@@ -23,25 +21,8 @@ module.exports = class GenreRepo {
      *
      * @returns {Promise<{rows: Genre[], count: number}>}
      */
-    async getGenres(limit = 50, offset = 0, search = '', columns = ['*']) {
-        let options = {
-            limit: limit,
-            offset: offset
-        };
-
-        if (search) {
-            options.where = {
-                name: {
-                    [Op.like]: search
-                }
-            };
-        }
-
-        if (columns) {
-            options.attributes = columns
-        }
-
-        return await this.genreModel.findAndCountAll(options);
+    async getGenres(limit = 50, offset = 0, search = '', columns = []) {
+        return await this.repository.getAll(limit, offset, search, columns);
     }
 
     /**
@@ -52,7 +33,7 @@ module.exports = class GenreRepo {
      * @returns {Promise<*>}
      */
     async getGenreById(id) {
-        return await this.genreModel.findByPk(id);
+        return await this.repository.getById(id);
     }
 
     /**
@@ -63,7 +44,7 @@ module.exports = class GenreRepo {
      * @returns {Promise<*>}
      */
     async getGenreByName(name) {
-        return await this.genreModel.findOne({ where : { name: name } });
+        return await this.repository.getByField('name', name);
     }
 
     /**
@@ -74,19 +55,19 @@ module.exports = class GenreRepo {
      * @returns {Promise<[Genre<any, TModelAttributes>, boolean]>}
      */
     async createGenre(name) {
-        return await this.genreModel.findOrCreate({ where: { name: name } });
+        return await this.repository.create({ name: name });
     }
 
     /**
      * Update a Genre
      *
-     * @param oldName
-     * @param newName
+     * @param id
+     * @param attributes
      *
      * @returns {Promise<*>}
      */
-    async updateGenre(oldName, newName) {
-        return await this.genreModel.update({ name: newName }, { where : { name: oldName }});
+    async updateGenre(id, attributes) {
+        return await this.repository.update(id, attributes);
     }
 
     /**
@@ -97,7 +78,7 @@ module.exports = class GenreRepo {
      * @returns {Promise<*>}
      */
     async deleteGenre(id) {
-        return await this.genreModel.destroy({ where: { id: id }});
+        return await this.repository.delete(id);
     }
 
 }

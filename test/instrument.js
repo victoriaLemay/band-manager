@@ -10,7 +10,7 @@ let sequelize;
 describe('Instrument Tests', function() {
     before(() => {
         sequelize = getDb();
-        repositories = require('../src/repositories/repositories');
+        repositories = require('../src/providers');
     });
 
     after(function () {
@@ -83,21 +83,19 @@ describe('Instrument Tests', function() {
         });
 
         it('createInstrument() should create an instrument when a valid name is provided', async function() {
-            let instrument, created;
             let name = 'Theramin';
-            [instrument, created] = await repositories.instrumentRepo.createInstrument(name);
+            const instrument  = await repositories.instrumentRepo.createInstrument(name);
             instrument.should.have.property('name').equal(name);
-            created.should.be.a('boolean');
-            created.should.equal(true);
         });
 
         it('createInstrument() should return an existing instrument when a duplicate name is provided', async function() {
-            let instrument, created;
             let name = 'Theramin';
-            [instrument, created] = await repositories.instrumentRepo.createInstrument(name);
-            instrument.should.have.property('name').equal(name);
-            created.should.be.a('boolean');
-            created.should.equal(false);
+            try {
+                await repositories.instrumentRepo.createInstrument(name);
+            } catch(err) {
+                err.should.be.an('error');
+                err.message.should.equal('Validation error');
+            }
         });
 
         it('createInstrument() should throw an exception if no name is provided', async function() {
@@ -117,7 +115,7 @@ describe('Instrument Tests', function() {
             const originalInstrument = await sequelize.query(`SELECT id FROM instruments WHERE name = '${originalName}' LIMIT 1;`,
                 { type: QueryTypes.SELECT });
 
-            await repositories.instrumentRepo.updateInstrument(originalName, updatedName);
+            await repositories.instrumentRepo.updateInstrument(originalInstrument[0].id, { name: updatedName });
 
             const updatedInstrument = await sequelize.query(`SELECT id FROM instruments WHERE name = '${updatedName}' LIMIT 1;`,
                 { type: QueryTypes.SELECT });
@@ -129,9 +127,11 @@ describe('Instrument Tests', function() {
             const originalName = 'Another Test Instrument';
             const updatedName = null;
             await sequelize.query(`INSERT INTO instruments (name) VALUES ('${originalName}');`, { type: QueryTypes.INSERT });
+            const originalInstrument = await sequelize.query(`SELECT id FROM instruments WHERE name = '${originalName}' LIMIT 1;`,
+                { type: QueryTypes.SELECT });
 
             try {
-                await repositories.instrumentRepo.updateInstrument(originalName, updatedName);
+                await repositories.instrumentRepo.updateInstrument(originalInstrument[0].id, updatedName);
             } catch (err) {
                 err.should.be.an('error');
                 err.message.should.equal('notNull Violation: Instrument.name cannot be null');
