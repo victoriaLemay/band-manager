@@ -15,12 +15,12 @@ async function up({ context: queryInterface }) {
             unique: true
         },
         created_at: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATE(3),
             allowNull: false,
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3)')
         },
         updated_at: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATE(3),
             allowNull: false,
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)')
         }

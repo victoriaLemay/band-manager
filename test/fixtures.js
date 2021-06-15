@@ -36,6 +36,14 @@ async function initialize() {
         VALUES ('8fe05626-90fd-4c9e-9a2a-63d0c6c7c19f', 'Test User 2', 'testuser2@email.com', 'New to bass');`);
     await sequelize.query(`INSERT INTO users (uuid, name, email, description) 
         VALUES ('8fe05626-90fd-4c9e-9a2a-63d0c6c7c19g', 'Test User 3', 'testuser3@email.com', 'New to drums');`);
+
+    // seed sessions
+    await sequelize.query(`INSERT INTO sessions (started_at, showcased_at, showcase_location) 
+        VALUES ('2021-01-01', '2021-03-01 03:00:00', 'Hole in the Wall')`);
+    await sequelize.query(`INSERT INTO sessions (started_at, showcased_at, showcase_location) 
+        VALUES ('2020-10-01', '2020-12-01 03:00:00', 'Mohawk')`);
+    await sequelize.query(`INSERT INTO sessions (started_at, showcased_at, showcase_location) 
+        VALUES ('2019-03-01', '2019-05-01 03:00:00', 'Speakeasy')`);
 }
 
 async function destroy() {

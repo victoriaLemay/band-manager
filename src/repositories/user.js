@@ -75,13 +75,13 @@ module.exports = class UserRepo {
     /**
      * Update a User
      *
-     * @param oldName
-     * @param newName
+     * @param id
+     * @param attributes
      *
      * @returns {Promise<*>}
      */
-    async updateUser(oldName, newName) {
-        return await this.repository.update(oldName, newName);
+    async updateUser(id, attributes) {
+        return await this.repository.update(id, attributes);
     }
 
     /**
