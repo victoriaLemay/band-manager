@@ -26,6 +26,16 @@ async function initialize() {
     await runMigrations(getDb()).then(() => {
         console.log('migrations run');
     });
+
+    const sequelize = getDb();
+
+    // seed users
+    await sequelize.query(`INSERT INTO users (uuid, name, email, description) 
+        VALUES ('8fe05626-90fd-4c9e-9a2a-63d0c6c7c19e', 'Test User 1', 'testuser1@email.com', 'New to guitar');`);
+    await sequelize.query(`INSERT INTO users (uuid, name, email, description) 
+        VALUES ('8fe05626-90fd-4c9e-9a2a-63d0c6c7c19f', 'Test User 2', 'testuser2@email.com', 'New to bass');`);
+    await sequelize.query(`INSERT INTO users (uuid, name, email, description) 
+        VALUES ('8fe05626-90fd-4c9e-9a2a-63d0c6c7c19g', 'Test User 3', 'testuser3@email.com', 'New to drums');`);
 }
 
 async function destroy() {

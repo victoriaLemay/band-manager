@@ -70,7 +70,7 @@ module.exports = class Repository {
      *
      * @param attributes Object
      *
-     * @returns {Promise<[Artist<any, TModelAttributes>, boolean]>}
+     * @returns {Promise<[Model<any, TModelAttributes>, boolean]>}
      */
     async create(attributes) {
 
