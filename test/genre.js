@@ -2,7 +2,7 @@ require('chai').should();
 const expect = require('chai').expect;
 const { QueryTypes } = require('sequelize');
 
-const { getDb } = require('../src/db');
+const { getDb } = require('../src/database/db');
 
 let repositories;
 let sequelize;
@@ -84,14 +84,16 @@ describe('Genre Tests', function() {
 
         it('createGenre() should create a genre when a valid name is provided', async function() {
             let name = 'Rockabilly';
-            const genre = await repositories.genreRepo.createGenre(name);
+            let attributes = {name: name};
+            const genre = await repositories.genreRepo.createGenre(attributes);
             genre.should.have.property('name').equal(name);
         });
 
         it('createGenre() should fail when a duplicate name is provided', async function() {
             let name = 'Rockabilly';
+            let attributes = {name: name};
             try {
-                await repositories.genreRepo.createGenre(name);
+                await repositories.genreRepo.createGenre(attributes);
             } catch(err) {
                 err.should.be.an('error');
                 err.message.should.equal('Validation error');
@@ -100,7 +102,7 @@ describe('Genre Tests', function() {
 
         it('createGenre() should throw an exception if no name is provided', async function() {
             try {
-                await repositories.genreRepo.createGenre(null);
+                await repositories.genreRepo.createGenre({name: null});
             }
             catch(err) {
                 err.should.be.an('error');

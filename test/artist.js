@@ -2,7 +2,7 @@ require('chai').should();
 const expect = require('chai').expect;
 const { QueryTypes } = require('sequelize');
 
-const { getDb } = require('../src/db');
+const { getDb } = require('../src/database/db');
 
 let repositories;
 let sequelize;
@@ -84,14 +84,16 @@ describe('Artist Tests', function() {
 
         it('createArtist() should create an artist when a valid name is provided', async function() {
             let name = 'AFI';
-            const artist = await repositories.artistRepo.createArtist(name);
+            let attributes = {name: name};
+            const artist = await repositories.artistRepo.createArtist(attributes);
             artist.should.have.property('name').equal(name);
         });
 
         it('createArtist() should fail when a duplicate name is provided', async function() {
             let name = 'AFI';
+            let attributes = {name: name};
             try {
-                await repositories.artistRepo.createArtist(name);
+                await repositories.artistRepo.createArtist(attributes);
             } catch (err) {
                 err.should.be.an('error');
                 err.message.should.equal('Validation error');
@@ -100,7 +102,7 @@ describe('Artist Tests', function() {
 
         it('createArtist() should throw an exception if no name is provided', async function() {
             try {
-                await repositories.artistRepo.createArtist(null);
+                await repositories.artistRepo.createArtist({name: null});
             }
             catch(err) {
                 err.should.be.an('error');

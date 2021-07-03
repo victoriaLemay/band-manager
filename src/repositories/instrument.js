@@ -50,12 +50,14 @@ module.exports = class InstrumentRepo {
     /**
      * Create a new Instrument
      *
-     * @param name
+     * Attributes: { name: "<name>" }
+     *
+     * @param attributes
      *
      * @returns {Promise<[Instrument<any, TModelAttributes>, boolean]>}
      */
-    async createInstrument(name) {
-        return await this.repository.create({ name: name });
+    async createInstrument(attributes) {
+        return await this.repository.create(attributes);
     }
 
     /**

@@ -38,16 +38,19 @@ module.exports = class SessionRepo {
     /**
      * Create a new Session
      *
-     * @param started_at
-     * @param showcased_at
-     * @param showcase_location
+     * Attributes:
+     *   {
+     *       started_at: "<started_at>",
+     *       showcased_at: "<showcased_at>",
+     *       showcase_location: "<showcase_location>"
+     *   }
+     *
+     * @param attributes
      *
      * @returns {Promise<[User<any, TModelAttributes>, boolean]>}
      */
-    async createSession(started_at, showcased_at, showcase_location) {
-        return await this.repository.create(
-            { started_at: started_at, showcased_at: showcased_at, showcase_location: showcase_location }
-        );
+    async createSession(attributes) {
+        return await this.repository.create(attributes);
     }
 
     /**

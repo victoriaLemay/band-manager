@@ -2,7 +2,7 @@ require('chai').should();
 const expect = require('chai').expect;
 const { QueryTypes } = require('sequelize');
 
-const { getDb } = require('../src/db');
+const { getDb } = require('../src/database/db');
 
 let repositories;
 let sequelize;
@@ -62,8 +62,13 @@ describe('Session Tests', function() {
             let startedAt = '1970-01-01';
             let showcasedAt = '1970-03-01 04:00:00';
             let showcaseLocation = 'CBGB OMFUG';
+            let attributes = {
+                started_at: startedAt,
+                showcased_at: showcasedAt,
+                showcase_location: showcaseLocation
+            }
 
-            const session = await repositories.sessionRepo.createSession(startedAt, showcasedAt, showcaseLocation);
+            const session = await repositories.sessionRepo.createSession(attributes);
 
             session.should.have.property('started_at').equal(startedAt);
             session.should.have.property('showcased_at');
@@ -73,9 +78,13 @@ describe('Session Tests', function() {
         it('createSession() should fail if no started_at is provided', async function() {
             let showcasedAt = '1970-03-01 04:00:00';
             let showcaseLocation = 'CBGB OMFUG';
+            let attributes = {
+                showcased_at: showcasedAt,
+                showcase_location: showcaseLocation
+            }
 
             try {
-                await repositories.sessionRepo.createSession(null, showcasedAt, showcaseLocation);
+                await repositories.sessionRepo.createSession(attributes);
             }
             catch(err) {
                 err.should.be.an('error');
@@ -86,9 +95,13 @@ describe('Session Tests', function() {
         it('createSession() should fail if no showcased_at is provided', async function() {
             let startedAt = '1970-03-01';
             let showcaseLocation = 'CBGB OMFUG';
+            let attributes = {
+                started_at: startedAt,
+                showcase_location: showcaseLocation
+            }
 
             try {
-                await repositories.sessionRepo.createSession(startedAt, null, showcaseLocation);
+                await repositories.sessionRepo.createSession(attributes);
             }
             catch(err) {
                 err.should.be.an('error');

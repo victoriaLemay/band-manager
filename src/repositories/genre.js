@@ -50,12 +50,14 @@ module.exports = class GenreRepo {
     /**
      * Create a new Genre
      *
-     * @param name
+     * Attributes: { name: "<name>" }
+     *
+     * @param attributes
      *
      * @returns {Promise<[Genre<any, TModelAttributes>, boolean]>}
      */
-    async createGenre(name) {
-        return await this.repository.create({ name: name });
+    async createGenre(attributes) {
+        return await this.repository.create(attributes);
     }
 
     /**

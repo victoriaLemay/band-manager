@@ -61,15 +61,20 @@ module.exports = class UserRepo {
     /**
      * Create a new User
      *
-     * @param uuid
-     * @param name
-     * @param email
-     * @param description
+     * Attributes:
+     *   {
+     *       uuid: "<uuid>",
+     *       name: "<name>:,
+     *       email: "<email>",
+     *       description: "<description>"
+     *   }
+     *
+     * @param attributes
      *
      * @returns {Promise<[User<any, TModelAttributes>, boolean]>}
      */
-    async createUser(uuid, name, email, description = '') {
-        return await this.repository.create({ uuid: uuid, name: name, email: email, description: description });
+    async createUser(attributes) {
+        return await this.repository.create(attributes);
     }
 
     /**

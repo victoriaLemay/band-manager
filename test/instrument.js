@@ -2,7 +2,7 @@ require('chai').should();
 const expect = require('chai').expect;
 const { QueryTypes } = require('sequelize');
 
-const { getDb } = require('../src/db');
+const { getDb } = require('../src/database/db');
 
 let repositories;
 let sequelize;
@@ -72,6 +72,7 @@ describe('Instrument Tests', function() {
             const instrument = await sequelize.query("SELECT id, name FROM instruments LIMIT 1;", { type: QueryTypes.SELECT });
 
             const result = await repositories.instrumentRepo.getInstrumentByName(instrument[0].name)
+
             result.id.should.equal(instrument[0].id);
         });
 
@@ -79,19 +80,25 @@ describe('Instrument Tests', function() {
             const badName = 'NoWayAnInstrumentIsNamedThis1234567_Test_Test';
 
             const result = await repositories.instrumentRepo.getInstrumentByName(badName);
+
             expect(result).to.be.null;
         });
 
         it('createInstrument() should create an instrument when a valid name is provided', async function() {
             let name = 'Theramin';
-            const instrument  = await repositories.instrumentRepo.createInstrument(name);
+            let attributes = { name: name };
+
+            const instrument  = await repositories.instrumentRepo.createInstrument(attributes);
+
             instrument.should.have.property('name').equal(name);
         });
 
         it('createInstrument() should return an existing instrument when a duplicate name is provided', async function() {
             let name = 'Theramin';
+            let attributes = { name: name };
+
             try {
-                await repositories.instrumentRepo.createInstrument(name);
+                await repositories.instrumentRepo.createInstrument(attributes);
             } catch(err) {
                 err.should.be.an('error');
                 err.message.should.equal('Validation error');
@@ -100,7 +107,7 @@ describe('Instrument Tests', function() {
 
         it('createInstrument() should throw an exception if no name is provided', async function() {
             try {
-                await repositories.instrumentRepo.createInstrument(null);
+                await repositories.instrumentRepo.createInstrument({name: null});
             }
             catch(err) {
                 err.should.be.an('error');

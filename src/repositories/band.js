@@ -1,9 +1,9 @@
 const { TModelAttributes } = require('sequelize');
 
-module.exports = class ArtistRepo {
+module.exports = class BandRepo {
 
     /**
-     * ArtistRepo constructor
+     * BandRepo constructor
      *
      * @param repository
      */
@@ -12,75 +12,86 @@ module.exports = class ArtistRepo {
     }
 
     /**
-     * Get a list of Artists (supports pagination)
+     * Get a list of Bands (supports pagination)
      *
      * @param limit - default: 50
      * @param offset - default: 0
      * @param search - default: none specified
      * @param columns - default: *
      *
-     * @returns {Promise<{rows: Artist[], count: number}>}
+     * @returns {Promise<{rows: Band[], count: number}>}
      */
-    async getArtists(limit = 50, offset = 0, search = '', columns = []) {
+    async getBands(limit = 50, offset = 0, search = '', columns = []) {
         return await this.repository.getAll(limit, offset, search, columns);
     }
 
     /**
-     * Get a single Artist by ID
+     * Get a single Band by ID
      *
      * @param id
      *
      * @returns {Promise<*>}
      */
-    async getArtistById(id) {
+    async getBandById(id) {
         return await this.repository.getById(id);
     }
 
     /**
-     * Get a single Artist by name
+     * Get a single Band by name
      *
      * @param name
      *
      * @returns {Promise<*>}
      */
-    async getArtistByName(name) {
+    async getBandByName(name) {
         return await this.repository.getByField('name', name);
     }
 
     /**
-     * Create a new Artist
+     * Create a new Band
      *
-     * Attributes: { name: "<name>" }
+     * Attributes:
+     *   {
+     *       session_id: <session id>,
+     *       artist_id: <artist id>,
+     *       genre_id: <genre id>,
+     *       name: "<name>",
+     *       image_url: "<image url>",
+     *       day_of_week: "<day of week>",
+     *       starts_at: "<time class starts>",
+     *       ends_at: "<time class ends>",
+     *       price: <price>,
+     *       duration_weeks: <class duration in weeks>
+     *   }
      *
      * @param attributes
      *
-     * @returns {Promise<[Artist<any, TModelAttributes>, boolean]>}
+     * @returns {Promise<[User<any, TModelAttributes>, boolean]>}
      */
-    async createArtist(attributes) {
+    async createBand(attributes) {
         return await this.repository.create(attributes);
     }
 
     /**
-     * Update an Artist
+     * Update a Band
      *
      * @param id
      * @param attributes
      *
      * @returns {Promise<*>}
      */
-    async updateArtist(id, attributes) {
+    async updateBand(id, attributes) {
         return await this.repository.update(id, attributes);
     }
 
     /**
-     * Delete an Artist
+     * Delete a Band
      *
      * @param id
      *
      * @returns {Promise<*>}
      */
-    async deleteArtist(id) {
+    async deleteBand(id) {
         return await this.repository.delete(id);
     }
-
 }

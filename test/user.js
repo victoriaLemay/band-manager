@@ -2,7 +2,7 @@ require('chai').should();
 const expect = require('chai').expect;
 const { QueryTypes } = require('sequelize');
 
-const { getDb } = require('../src/db');
+const { getDb } = require('../src/database/db');
 
 let repositories;
 let sequelize;
@@ -87,8 +87,14 @@ describe('User Tests', function() {
             let name = 'Me';
             let email = 'me@email.com';
             let description = 'ready to wail';
+            let attributes = {
+              uuid: uuid,
+              name: name,
+              email: email,
+              description: description
+            };
 
-            const user = await repositories.userRepo.createUser(uuid, name, email, description);
+            const user = await repositories.userRepo.createUser(attributes);
 
             user.should.have.property('uuid').equal(uuid);
             user.should.have.property('name').equal(name);
@@ -101,9 +107,15 @@ describe('User Tests', function() {
             let name = 'Me';
             let email = 'me2@email.com';
             let description = 'ready to wail';
+            let attributes = {
+                uuid: uuid,
+                name: name,
+                email: email,
+                description: description
+            };
 
             try {
-                await repositories.userRepo.createUser(uuid, name, email, description);
+                await repositories.userRepo.createUser(attributes);
             } catch (err) {
                 err.should.be.an('error');
                 err.message.should.equal('Validation error');
@@ -115,9 +127,15 @@ describe('User Tests', function() {
             let name = 'Me';
             let email = 'me@email.com';
             let description = 'ready to wail';
+            let attributes = {
+                uuid: uuid,
+                name: name,
+                email: email,
+                description: description
+            };
 
             try {
-                await repositories.userRepo.createUser(uuid, name, email, description);
+                await repositories.userRepo.createUser(attributes);
             } catch (err) {
                 err.should.be.an('error');
                 err.message.should.equal('Validation error');
@@ -128,9 +146,15 @@ describe('User Tests', function() {
             let name = 'Me';
             let email = 'me3@email.com';
             let description = 'ready to wail';
+            let attributes = {
+                uuid: null,
+                name: name,
+                email: email,
+                description: description
+            };
 
             try {
-                await repositories.userRepo.createUser(null, name, email, description);
+                await repositories.userRepo.createUser(attributes);
             }
             catch(err) {
                 err.should.be.an('error');
@@ -142,9 +166,15 @@ describe('User Tests', function() {
             let uuid = 'e82f1bca-03f9-42ad-b012-72e08f534ea8';
             let email = 'me3@email.com';
             let description = 'ready to wail';
+            let attributes = {
+                uuid: uuid,
+                name: null,
+                email: email,
+                description: description
+            };
 
             try {
-                await repositories.userRepo.createUser(uuid, null, email, description);
+                await repositories.userRepo.createUser(attributes);
             }
             catch(err) {
                 err.should.be.an('error');
@@ -156,9 +186,15 @@ describe('User Tests', function() {
             let name = 'Me';
             let uuid = 'e82f1bca-03f9-42ad-b012-72e08f534ea8';
             let description = 'ready to wail';
+            let attributes = {
+                uuid: uuid,
+                name: name,
+                email: null,
+                description: description
+            };
 
             try {
-                await repositories.userRepo.createUser(uuid, name, null, description);
+                await repositories.userRepo.createUser(attributes);
             }
             catch(err) {
                 err.should.be.an('error');
@@ -170,13 +206,18 @@ describe('User Tests', function() {
             let uuid = 'e82f1bca-03f9-42ad-b012-72e08f534ea9';
             let name = 'Me';
             let email = 'me4@email.com';
+            let attributes = {
+                uuid: uuid,
+                name: name,
+                email: email
+            };
 
-            const user = await repositories.userRepo.createUser(uuid, name, email);
+            const user = await repositories.userRepo.createUser(attributes);
 
             user.should.have.property('uuid').equal(uuid);
             user.should.have.property('name').equal(name);
             user.should.have.property('email').equal(email);
-            user.should.have.property('description').equal('');
+            expect(user.description).to.be.undefined;
         });
 
         it('updateUser() should update the uuid of a user when a valid uuid is provided', async function() {
