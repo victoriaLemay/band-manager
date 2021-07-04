@@ -86,14 +86,32 @@ describe('Instrument Tests', function() {
 
         it('createInstrument() should create an instrument when a valid name is provided', async function() {
             let name = 'Theramin';
-            let attributes = { name: name };
+            let isDefault = 1;
+            let attributes = {
+                name: name,
+                is_band_default: isDefault
+            };
 
             const instrument  = await repositories.instrumentRepo.createInstrument(attributes);
 
             instrument.should.have.property('name').equal(name);
+            instrument.should.have.property('is_band_default').equal(isDefault);
         });
 
-        it('createInstrument() should return an existing instrument when a duplicate name is provided', async function() {
+        it('createInstrument() should set is_band_default to 0 if it is not provided', async function() {
+            let name = 'Mandolin';
+            let expectedIsBandDefault = 0;
+            let attributes = {
+                name: name
+            }
+
+            const instrument  = await repositories.instrumentRepo.createInstrument(attributes);
+
+            instrument.should.have.property('name').equal(name);
+            instrument.should.have.property('is_band_default').equal(expectedIsBandDefault);
+        });
+
+        it('createInstrument() should fail when a duplicate name is provided', async function() {
             let name = 'Theramin';
             let attributes = { name: name };
 

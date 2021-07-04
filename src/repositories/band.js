@@ -29,11 +29,12 @@ module.exports = class BandRepo {
      * Get a single Band by ID
      *
      * @param id
+     * @param includes
      *
      * @returns {Promise<*>}
      */
-    async getBandById(id) {
-        return await this.repository.getById(id);
+    async getBandById(id, includes = []) {
+        return await this.repository.getById(id, includes);
     }
 
     /**

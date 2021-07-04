@@ -43,14 +43,48 @@ module.exports = class Repository {
     }
 
     /**
-     * Get a single Model by ID
+     * Get all records for a foreign key
      *
+     * @param key
      * @param id
+     * @param includes
      *
      * @returns {Promise<*>}
      */
-    async getById(id) {
-        return await this.model.findByPk(id);
+    async getAllByForeignKey(key, id, includes) {
+        let options = {
+            where: {
+                [key]: id
+            }
+        };
+
+        if (typeof includes !== 'undefined' && includes.length > 0) {
+            options.include = includes;
+        }
+
+        return await this.model.findAll(options);
+    }
+
+    /**
+     * Get a single Model by ID
+     *
+     * @param id
+     * @param includes
+     *
+     * @returns {Promise<*>}
+     */
+    async getById(id, includes = []) {
+        let options = {
+            where: {
+                id: id
+            }
+        };
+
+        if (typeof includes !== 'undefined' && includes.length > 0) {
+            options.include = includes;
+        }
+
+        return await this.model.findOne(options);
     }
 
     /**
@@ -62,7 +96,7 @@ module.exports = class Repository {
      * @returns {Promise<*>}
      */
     async getByField(name, value) {
-        return await this.model.findOne({ where : { name: value } });
+        return await this.model.findOne({ where : { [name]: value } });
     }
 
     /**

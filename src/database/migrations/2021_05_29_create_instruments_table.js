@@ -14,6 +14,10 @@ async function up({ context: queryInterface }) {
             allowNull: false,
             unique: true
         },
+        is_band_default: {
+            type: DataTypes.TINYINT(1),
+            defaultValue: 0
+        },
         created_at: {
             type: DataTypes.DATE(3),
             allowNull: false,
@@ -25,6 +29,7 @@ async function up({ context: queryInterface }) {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)')
         }
     }).then(() => {
+        queryInterface.addIndex('instruments', ['is_band_default']);
         queryInterface.bulkInsert('instruments', instrumentSeeds);
     });
 }

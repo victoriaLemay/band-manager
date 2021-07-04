@@ -50,6 +50,11 @@ async function up({ context: queryInterface }) {
             allowNull: false,
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)')
         }
+    }).then(() => {
+        queryInterface.addIndex('bands', ['session_id']);
+        queryInterface.addIndex('bands', ['artist_id']);
+        queryInterface.addIndex('bands', ['genre_id']);
+        queryInterface.addIndex('bands', ['name']);
     });
 }
 

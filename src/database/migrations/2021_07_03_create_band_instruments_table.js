@@ -1,29 +1,23 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 async function up({ context: queryInterface }) {
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable('band_instruments', {
         id: {
             type: DataTypes.BIGINT,
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
-        uuid: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            unique: true
-        },
-        name: {
-            type: DataTypes.STRING(128),
+        band_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
-        email: {
-            type: DataTypes.STRING(256),
-            allowNull: false,
-            unique: true
+        instrument_id: {
+            type: DataTypes.BIGINT,
+            allowNull: false
         },
-        description: {
-            type: DataTypes.TEXT
+        user_id: {
+            type: DataTypes.BIGINT
         },
         created_at: {
             type: DataTypes.DATE(3),
@@ -36,12 +30,14 @@ async function up({ context: queryInterface }) {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)')
         }
     }).then(() => {
-        queryInterface.addIndex('users', ['name']);
+        queryInterface.addIndex('band_instruments', ['band_id']);
+        queryInterface.addIndex('band_instruments', ['instrument_id']);
+        queryInterface.addIndex('band_instruments', ['user_id']);
     });
 }
 
 async function down({ context: queryInterface }) {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('band_instruments');
 }
 
 module.exports = { up, down };

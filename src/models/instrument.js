@@ -9,6 +9,10 @@ const instrumentInit = function (sequelize, DataTypes) {
             type: DataTypes.STRING(256),
             allowNull: false,
             unique: true
+        },
+        is_band_default: {
+            type: DataTypes.TINYINT(1),
+            defaultValue: 0
         }
     },{
         sequelize,

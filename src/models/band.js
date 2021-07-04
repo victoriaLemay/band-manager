@@ -2,6 +2,7 @@ const Session = require('./session');
 const Artist = require('./artist');
 const Genre = require('./genre');
 const { exists } = require('../validation/validators');
+const { QueryTypes } = require('sequelize');
 
 const bandInit = function (sequelize, DataTypes) {
     return sequelize.define('Band', {
@@ -79,6 +80,12 @@ const bandInit = function (sequelize, DataTypes) {
             type: DataTypes.INTEGER
         }
     },{
+        hooks: {
+            afterCreate: async (band, options) => {
+                await sequelize.query('INSERT INTO band_instruments (band_id, instrument_id) SELECT ' +
+                    band.id + ', I.id FROM instruments I WHERE I.is_band_default = 1', { type: QueryTypes.INSERT })
+            }
+        },
         sequelize,
         modelName: 'Band',
         tableName: 'bands',

@@ -113,6 +113,40 @@ describe('Band Tests', function() {
             band.should.have.property('duration_weeks').equal(durationWeeks);
         });
 
+        it('createBand() should trigger creation of default band instruments if successful', async function() {
+            let sessionId = 2;
+            let artistId = 2;
+            let genreId = 2;
+            let name = 'bikini kill';
+            let imageURL = 'http://www.images.com/image.jpg';
+            let dayOfWeek = 'Wednesday';
+            let startsAt = '20:00:00';
+            let endsAt = '21:30:00';
+            let price = 200.00;
+            let durationWeeks = 8;
+            let attributes = {
+                session_id: sessionId,
+                artist_id: artistId,
+                genre_id: genreId,
+                name: name,
+                image_url: imageURL,
+                day_of_week: dayOfWeek,
+                starts_at: startsAt,
+                ends_at: endsAt,
+                price: price,
+                duration_weeks: durationWeeks
+            };
+
+            const band = await repositories.bandRepo.createBand(attributes);
+
+            const instrumentCount = await sequelize.query(`SELECT COUNT(0) as total FROM instruments WHERE is_band_default = 1;`,
+                { type: QueryTypes.SELECT });
+            const bandInstruments = await sequelize.query(`SELECT id FROM band_instruments WHERE band_id = '${band.id}';`,
+                { type: QueryTypes.SELECT });
+
+            bandInstruments.length.should.equal(instrumentCount[0].total);
+        });
+
         it('createBand() should fail if no session_id is provided', async function() {
             let artistId = 1;
             let genreId = 1;
